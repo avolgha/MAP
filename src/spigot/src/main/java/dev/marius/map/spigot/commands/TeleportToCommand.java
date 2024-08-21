@@ -26,7 +26,7 @@ public class TeleportToCommand extends BaseCommand {
                                     PlayerSelectorArgumentResolver resolver = context.getArgument("target", PlayerSelectorArgumentResolver.class);
                                     List<Player> targets = resolver.resolve(context.getSource());
                                     if (targets.size() > 1) {
-                                        this.message(Objects.requireNonNull(context.getSource().getExecutor()), "Found two many target players.");
+                                        this.message(Objects.requireNonNull(context.getSource().getExecutor()), "Found too many target players.");
                                         return 2;
                                     }
                                     Objects.requireNonNull((Player) context.getSource().getExecutor()).teleport(targets.getFirst(), PlayerTeleportEvent.TeleportCause.PLUGIN);

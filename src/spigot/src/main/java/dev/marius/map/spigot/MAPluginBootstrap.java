@@ -24,6 +24,7 @@ public class MAPluginBootstrap implements PluginBootstrap {
             registry.register(new MaintenanceCommand().node(), "Toggle maintenance mode");
             registry.register(new PlayerGuiCommand().node(), "Toggles PlayerGUI mode");
             registry.register(new QuickGuiCommand().node(), "Quickly open any Minecraft-native GUI");
+            registry.register(new RunAsCommand().node(), "Run commands as another player");
             registry.register(new StaffChatCommand().node(), "Sends messages to a staff only chat");
             registry.register(new TeleportHereCommand().node(), "Teleports a player to you");
             registry.register(new TeleportToCommand().node(), "Teleports you to a player or to a coordinate");
