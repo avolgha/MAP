@@ -10,9 +10,9 @@
 
 ### What is it?
 
-Mairus Admin Plugin or short `map` is a [Spigot](https://spigotmc.org) plugin, created by [me](https://github.com/avolgha), *Marius*
+*Marius Admin Plugin* or short `map` is a [Spigot](https://spigotmc.org) plugin, created by [me](https://github.com/avolgha), *Marius*
 
-It adds a few features like vanish or teleporting to the server. *(all features you can see [here](https://github.com/avolgha/map/blob/dev/PROJECT.md))*
+It adds a few features like vanish or teleporting to the server.
 
 Feel free to create an [Issue](https://github.com/avolgha/map/issues) if you have questions. You can also contact me on discord (see `Support` section below) 
 

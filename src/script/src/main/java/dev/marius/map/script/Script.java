@@ -1,7 +1,6 @@
 package dev.marius.map.script;
 
 import dev.marius.map.script.rhino.RhinoScriptEngine;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.*;
 
 import java.io.*;
@@ -25,14 +24,14 @@ public class Script {
      * @return The return value of the executed script. Returns null if there was a exception or the script
      *         isn't returning anything
      */
-    public static @Nullable Object launchScript(@NotNull File location, Player executor, String[] arguments,
+    public static @Nullable Object launchScript(@NotNull File location, Object executor, String[] arguments,
                                                 Map<String, Object> parameters, Consumer<ScriptResult> failureHandler) {
         String filename = location.getPath();
         int index = filename.lastIndexOf('.');
         String ext = filename.substring(index + 1);
 
         if (!ext.equalsIgnoreCase("js")) {
-            failureHandler.accept(ScriptResult.NOT_VALID_SCRIPT_FILE);
+            failureHandler.accept(ScriptResult.INVALID_SCRIPT_FILE);
             return null;
         }
 
@@ -44,7 +43,7 @@ public class Script {
             byte[] data = new byte[in.available()];
             in.readFully(data);
             in.close();
-            script = new String(data, 0, data.length, StandardCharsets.UTF_8);
+            script = new String(data, StandardCharsets.UTF_8);
         } catch (IOException e) {
             failureHandler.accept(ScriptResult.COULD_NOT_READ_SCRIPT);
             return null;
@@ -59,13 +58,10 @@ public class Script {
             return null;
         }
 
-        ScriptContext context = new ScriptContext();
-
         engine.setTimeLimit(3000);
 
         Map<String, Object> vars = new HashMap<>();
         vars.put("args", arguments);
-        vars.put("context", context);
         vars.put("player", executor);
         vars.putAll(parameters);
 

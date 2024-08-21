@@ -1,42 +1,41 @@
 package dev.marius.map.spigot.commands;
 
-import dev.marius.map.spigot.Command;
-import dev.marius.map.spigot.Plugin;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.SignedMessageResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class AlertCommand extends Command {
-    public AlertCommand() {
-        super("alert");
-    }
-
+@SuppressWarnings("UnstableApiUsage")
+public class AlertCommand extends BaseCommand {
     @Override
-    protected void execute(Player player, String[] args) {
-        if (args.length < 2) {
-            player.sendMessage(prefix + ChatColor.RED + "Usage: " + ChatColor.GRAY + "/alert <as | none> <message ...>");
-            return;
-        }
+    public LiteralCommandNode<CommandSourceStack> node() {
+        return Commands.literal("alert")
+                .requires(source -> !(source.getExecutor() instanceof Player player) || (player.isOp() || player.hasPermission("map.alert")))
+                .then(Commands.argument("message", ArgumentTypes.signedMessage())
+                        .executes(context -> {
+                            SignedMessageResolver message = context.getArgument("message", SignedMessageResolver.class);
 
-        hasPermission(player, Plugin.getConfiguration().getAlertPermission(), () -> {
-            String as = args[0];
-            StringBuilder message = new StringBuilder();
+                            Bukkit.broadcast(Component.join(
+                                    JoinConfiguration.spaces(),
+                                    Component.newline(),
+                                    Component.text("ALERT")
+                                            .decorate(TextDecoration.BOLD)
+                                            .color(NamedTextColor.RED),
+                                    Component.text("»")
+                                            .color(NamedTextColor.DARK_GRAY),
+                                    Component.text(message.content()),
+                                    Component.newline()
+                            ));
 
-            for (int i = 1; i < args.length; i++)
-                message.append(args[i]);
-
-            String send;
-            if (as.equalsIgnoreCase("none"))
-                send = message.toString();
-            else
-                send = String.format("[%s]: %s", as, message);
-
-            Bukkit.broadcastMessage(ChatColor.RED + "[Alert]: " + ChatColor.translateAlternateColorCodes('&', send));
-        });
-    }
-
-    @Override
-    protected String tabComplete(Player player, String[] args) {
-        return args.length == 0 ? "<as | none>" : "<message ...>";
+                            return SUCCESS;
+                        }))
+                .build();
     }
 }

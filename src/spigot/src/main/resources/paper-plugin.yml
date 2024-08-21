@@ -1,0 +1,7 @@
+name: MariusAdminPlugin
+version: 2.0.0
+main: dev.marius.map.spigot.MAPlugin
+bootstrapper: dev.marius.map.spigot.MAPluginBootstrap
+
+description: Marius Admin Plugin
+api-version: '1.21.1'

@@ -1,73 +1,29 @@
 package dev.marius.map.spigot;
 
-import org.bukkit.ChatColor;
-import org.bukkit.permissions.Permission;
+import org.bukkit.Location;
+
+import java.util.*;
 
 public class Config {
-    private String chatPrefix = "&8[&cMAP&8] &7";
-    private String staffMessagePrefix = "&8[&aSM&8] &7";
+    public LobbyConfig lobby = new LobbyConfig();
+    public CookieClickerConfig cookieClicker = new CookieClickerConfig();
+    public MaintenanceConfig maintenance = new MaintenanceConfig();
+    public String autorunScript = "";
 
-    private String staffChatReceivePermission = "map.sm.get";
-    private String staffChatSendPermission = "map.sm.send";
-    private String teleportToPlayerPermission = "map.tpto.player";
-    private String teleportToCoordPermission = "map.tpto.coord";
-    private String teleportHerePermission = "map.tphere";
-    private String gamemodePermission = "map.gamemode";
-    private String playerguiPermission = "map.playergui";
-    private String vanishPermission = "map.vanish";
-    private String vanishBypassPermission = "map.vanish.bypass";
-    private String alertPermission = "map.alert";
-    private String quickGuiPermission = "map.quickgui";
-
-    public String getChatPrefix() {
-        return ChatColor.translateAlternateColorCodes('&', chatPrefix);
+    public static class LobbyConfig {
+        public boolean noBuild = true;
+        public boolean autoSurvival = true;
+        public Location spawnLocation = null;
     }
 
-    public String getStaffMessagePrefix() {
-        return ChatColor.translateAlternateColorCodes('&', staffMessagePrefix);
+    public static class CookieClickerConfig {
+        public boolean enabled = true;
+        public List<Location> locations = new ArrayList<>();
+        public Map<UUID, Integer> balance = new HashMap<>();
     }
 
-    public Permission getStaffChatReceivePermission() {
-        return new Permission(staffChatReceivePermission);
-    }
-
-    public Permission getStaffChatSendPermission() {
-        return new Permission(staffChatSendPermission);
-    }
-
-    public Permission getTeleportToPlayerPermission() {
-        return new Permission(teleportToPlayerPermission);
-    }
-
-    public Permission getTeleportToCoordPermission() {
-        return new Permission(teleportToCoordPermission);
-    }
-
-    public Permission getTeleportHerePermission() {
-        return new Permission(teleportHerePermission);
-    }
-
-    public Permission getGamemodePermission() {
-        return new Permission(gamemodePermission);
-    }
-
-    public Permission getPlayerguiPermission() {
-        return new Permission(playerguiPermission);
-    }
-
-    public Permission getVanishPermission() {
-        return new Permission(vanishPermission);
-    }
-
-    public Permission getVanishBypassPermission() {
-        return new Permission(vanishBypassPermission);
-    }
-
-    public Permission getAlertPermission() {
-        return new Permission(alertPermission);
-    }
-
-    public Permission getQuickGuiPermission() {
-        return new Permission(quickGuiPermission);
+    public static class MaintenanceConfig {
+        public boolean enabled = false;
+        public String extraMessage = null;
     }
 }

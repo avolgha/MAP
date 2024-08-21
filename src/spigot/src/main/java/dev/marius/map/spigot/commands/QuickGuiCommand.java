@@ -1,44 +1,27 @@
 package dev.marius.map.spigot.commands;
 
-import dev.marius.map.spigot.Command;
-import dev.marius.map.spigot.Plugin;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.marius.map.spigot.commands.argument.InventoryTypeArgumentType;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-public class QuickGuiCommand extends Command {
-    public QuickGuiCommand() {
-        super("quickgui");
-    }
-
+@SuppressWarnings("UnstableApiUsage")
+public class QuickGuiCommand extends BaseCommand {
     @Override
-    protected void execute(Player player, String[] args) {
-        if (args.length != 1) {
-            player.sendMessage(prefix + ChatColor.RED + "Usage: " + ChatColor.GRAY + "/quickgui <type>");
-            return;
-        }
-
-        hasPermission(player, Plugin.getConfiguration().getQuickGuiPermission(), () -> {
-            String type = args[0];
-            if (type.equalsIgnoreCase("list")) {
-                player.sendMessage(Arrays.stream(InventoryType.values()).map(Enum::name).collect(Collectors.joining()));
-            } else {
-                try {
-                    InventoryType invType = InventoryType.valueOf(type.toUpperCase());
-                    player.openInventory(Bukkit.createInventory(null, invType));
-                } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error: there is no inventory type with this name");
-                }
-            }
-        });
-    }
-
-    @Override
-    protected String tabComplete(Player player, String[] args) {
-        return args.length == 0 ? Arrays.stream(InventoryType.values()).map(Enum::name).collect(Collectors.joining()) : "";
+    public LiteralCommandNode<CommandSourceStack> node() {
+        return Commands.literal("quickgui")
+                .requires(source -> source.getExecutor() instanceof Player player && (player.isOp() || player.hasPermission("map.quickgui")))
+                .then(Commands.argument("gui", new InventoryTypeArgumentType())
+                        .executes(context -> {
+                            InventoryType type = context.getArgument("gui", InventoryType.class);
+                            Objects.requireNonNull((Player) context.getSource().getExecutor()).openInventory(Bukkit.createInventory(null, type));
+                            return SUCCESS;
+                        }))
+                .build();
     }
 }

@@ -1,40 +1,41 @@
 package dev.marius.map.spigot.commands;
 
-import dev.marius.map.spigot.Command;
-import dev.marius.map.spigot.Plugin;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.SignedMessageResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class StaffChatCommand extends Command {
-    public StaffChatCommand() {
-        super("sm");
-    }
-
+@SuppressWarnings("UnstableApiUsage")
+public class StaffChatCommand extends BaseCommand {
     @Override
-    protected void execute(Player player, String[] args) {
-        if (args.length == 0) {
-            player.sendMessage(prefix + ChatColor.RED + "Usage: " + ChatColor.GRAY + "/sm <Message ...>");
-            return;
-        }
+    public LiteralCommandNode<CommandSourceStack> node() {
+        return Commands.literal("sc")
+                .requires(source -> source.getExecutor() instanceof Player player && (player.isOp() || player.hasPermission("map.staffchat.send")))
+                .then(Commands.argument("message", ArgumentTypes.signedMessage())
+                        .executes(context -> {
+                            SignedMessageResolver message = context.getArgument("message", SignedMessageResolver.class);
 
-        hasPermission(player, Plugin.getConfiguration().getStaffChatSendPermission(), () -> {
-            StringBuilder message = new StringBuilder();
-            for (String arg : args) {
-                message.append(arg).append(" ");
-            }
+                            Bukkit.getOnlinePlayers().stream()
+                                    .filter(target -> target.hasPermission("map.staffchat.receive"))
+                                    .forEach(target -> target.sendMessage(Component.join(
+                                            JoinConfiguration.spaces(),
+                                            Component.text("STAFF")
+                                                    .color(NamedTextColor.GOLD)
+                                                    .decorate(TextDecoration.BOLD),
+                                            target.displayName(),
+                                            Component.text("»").color(NamedTextColor.DARK_GRAY),
+                                            Component.text(message.content()).color(NamedTextColor.WHITE)))
+                                    );
 
-            Bukkit.getOnlinePlayers().stream()
-                    .filter(target -> target.hasPermission(Plugin.getConfiguration().getStaffChatReceivePermission()))
-                    .forEach(target -> target.sendMessage(Plugin.getConfiguration().getStaffMessagePrefix() +
-                            String.format(ChatColor.GOLD + "%s " + ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + "%s",
-                                    target.getDisplayName(), ChatColor.translateAlternateColorCodes('&', message.toString()))));
-
-        });
-    }
-
-    @Override
-    protected String tabComplete(Player player, String[] args) {
-        return "<Message ...>";
+                            return SUCCESS;
+                        }))
+                .build();
     }
 }
