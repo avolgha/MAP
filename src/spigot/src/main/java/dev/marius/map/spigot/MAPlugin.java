@@ -52,42 +52,29 @@ public final class MAPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VanishListener(this), this);
 
         if (config.lobby.noBuild) {
-            getServer().getConsoleSender().sendMessage("[MAP] Enabled Lobby No-Build");
+            getLogger().info("Enabled Lobby No-Build");
             getServer().getPluginManager().registerEvents(new NoBuildListener(), this);
         }
 
         if (config.cookieClicker.enabled) {
-            getServer().getConsoleSender().sendMessage("[MAP] Enabled Cookie Clicker");
+            getLogger().info("Enabled Cookie Clicker");
             new CookieClicker(this);
         }
 
-
-  /*      for (Command command : new Command[] {
-                new AlertCommand(),
-                new FlyCommand(),
-                new GamemodeCommand(),
-                new PlayerguiCommand(),
-                new QuickGuiCommand(),
-                new StaffChatCommand(),
-                new TpHereCommand(),
-                new TpToCommand(),
-                new VanishCommand()
-        }) command.register(this);
-*/
         if (config.autorunScript.trim().length() > 1) {
             File scriptFile = new File(this.getDataFolder(), config.autorunScript);
             if (!scriptFile.exists()) {
-                this.getLogger().warning("Could not find autorun script in config folder.");
+                getLogger().warning("Could not find autorun script in config folder.");
             } else if (!scriptFile.isFile() || !scriptFile.toPath().endsWith(".js")) {
-                this.getLogger().warning("Autorun Script is supposed to be a JavaScript-file.");
+                getLogger().warning("Autorun Script is supposed to be a JavaScript-file.");
             } else {
-                Script.launchScript(scriptFile, this, new String[0], Map.of("console", this.getLogger()), result -> {
-                    this.getLogger().info("Script ended with code " + result.name());
+                Script.launchScript(scriptFile, this, new String[0], Map.of("console", getLogger()), result -> {
+                    getLogger().info("Script ended with code " + result.name());
                 });
             }
         }
 
-        getServer().getConsoleSender().sendMessage("[MAP] Enabled plugin");
+        getLogger().info("Enabled plugin");
     }
 
     @Override
