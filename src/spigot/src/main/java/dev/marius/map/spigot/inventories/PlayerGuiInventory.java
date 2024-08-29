@@ -6,11 +6,8 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +16,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-public class PlayerGuiInventory implements InventoryHolder {
+public class PlayerGuiInventory extends BaseInventory {
     private static final TextComponent baseInventoryName = Component.text("").append(Component.join(
             JoinConfiguration.spaces(),
             Component.text("»").color(NamedTextColor.DARK_GRAY),
@@ -27,30 +24,22 @@ public class PlayerGuiInventory implements InventoryHolder {
             Component.text("-").color(NamedTextColor.DARK_GRAY)
     ));
 
-    private final Inventory inventory;
     private final Player target;
 
     public PlayerGuiInventory(@NotNull Player target) {
-        this.inventory = Bukkit.createInventory(this, 9 * 6, baseInventoryName.append(target.name()));
+        super(9, 6, baseInventoryName.append(target.name()));
         this.target = target;
+        
         this.fillInventory();
     }
 
+    @Override
     public void fillInventory() {
         for (int i = 0; i < inventory.getSize(); i++) inventory.setItem(i, ItemUtility.getPlaceholderStack());
 
         inventory.setItem(13, getHeadItem(target));
         inventory.setItem(20, getKickButton());
         inventory.setItem(24, getBanButton());
-    }
-
-    public void openInventory(@NotNull Player player) {
-        player.openInventory(this.inventory);
-    }
-
-    @Override
-    public @NotNull Inventory getInventory() {
-        return this.inventory;
     }
 
     public Player getTarget() {

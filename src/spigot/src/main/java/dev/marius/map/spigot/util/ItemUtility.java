@@ -6,9 +6,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.*;
 
 public class ItemUtility {
+    private static final ItemStack placeholderStack;
+
+    static {
+        placeholderStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        placeholderStack.editMeta(meta -> meta.displayName(Component.empty()));
+    }
+
     public static @NotNull ItemStack getPlaceholderStack() {
-        ItemStack stack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        stack.editMeta(meta -> meta.displayName(Component.empty()));
-        return stack;
+        return placeholderStack;
     }
 }

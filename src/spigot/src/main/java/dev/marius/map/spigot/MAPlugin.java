@@ -46,6 +46,7 @@ public final class MAPlugin extends JavaPlugin {
             getLogger().throwing("Plugin", "loadConfig", e);
         }
 
+        getServer().getPluginManager().registerEvents(new AdminEnchantListener(), this);
         getServer().getPluginManager().registerEvents(new LobbyJoinListener(), this);
         getServer().getPluginManager().registerEvents(new MaintenanceListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerClickListener(), this);

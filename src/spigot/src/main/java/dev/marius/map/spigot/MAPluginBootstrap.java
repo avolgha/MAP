@@ -18,6 +18,7 @@ public class MAPluginBootstrap implements PluginBootstrap {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands registry = event.registrar();
 
+            registry.register(new AdminEnchantCommand().node(), "Enchant items without needing experience", List.of("aenchant"));
             registry.register(new AlertCommand().node(), "Broadcast some alert message on the server");
             registry.register(new FlyCommand().node(), "Creative flight for any gamemode");
             registry.register(new GameModeCommand().node(), "Changes your gamemode", List.of("gm"));
